@@ -31,32 +31,6 @@ class DuplicatesPipeline:
             return item
 
 
-class SavingTosqlitePipeline(object):
-    def __init__(self):
-        self.connection = sqlite3.connect("data.db")
-        self.curr = self.connection.cursor()
-        self.create_table()
-    def create_table(self):
-        self.curr.execute("""CREATE TABLE IF NOT EXISTS chocolate_products(
-        name TEXT,
-        price TEXT,
-        url TEXT)""")
-
-    def process_item(self, item, spider):
-        self.curr.execute("""INSERT OR IGNORE INTO chocolate_products(name, price, url) VALUES (?,?,?)""", (
-            item["name"],
-            item["price"],
-            item["url"]
-        ))
-        self.connection.commit()
-        return item
-
-
-    def close_spider(self, spider):
-        self.curr.close()
-        self.connection.close()
-
-
 class SavingToPostgresPipeline(object):
     def __init__(self):
         self.connection = psycopg2.connect(
