@@ -62,9 +62,11 @@ ROBOTSTXT_OBEY = True
 
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
-#ITEM_PIPELINES = {
-#    'chocolatescraper.pipelines.ChocolatescraperPipeline': 300,
-#}
+ITEM_PIPELINES = {
+    'chocolatescraper.pipelines.PriceToUSDPipeline': 100,
+    'chocolatescraper.pipelines.DuplicatesPipeline': 200,
+    'chocolatescraper.pipelines.SavingToPostgresPipeline': 300,
+}
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://docs.scrapy.org/en/latest/topics/autothrottle.html
@@ -86,6 +88,7 @@ ROBOTSTXT_OBEY = True
 #HTTPCACHE_DIR = 'httpcache'
 #HTTPCACHE_IGNORE_HTTP_CODES = []
 #HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
+
 
 # Set settings whose default value is deprecated to a future-proof value
 REQUEST_FINGERPRINTER_IMPLEMENTATION = '2.7'

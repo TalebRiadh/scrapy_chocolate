@@ -1,19 +1,26 @@
 import scrapy
+from chocolatescraper.itemsloaders import ChocolateProductLoader
+from chocolatescraper.items import ChocolateProduct
 
 
-class ChocolatespiderSpider(scrapy.Spider):
+class ChocolateSpider(scrapy.Spider):
+    # The name of the spider
     name = 'chocolatespider'
-    allowed_domains = ['chocolate.co.uk']
+
+    # These are the urls that we will start scraping
     start_urls = ['https://www.chocolate.co.uk/collections/all']
 
     def parse(self, response):
         products = response.css('product-item')
+
         for product in products:
-            yield{
-                'name': product.css('a.product-item-meta__title::text').get(),
-                'price': product.css('span.price').get().replace('<span class="price">\n              <span class="visually-hidden">Sale price</span>','').replace('</span>',''),
-                'url': product.css('div.product-item-meta a').attrib['href']
-            }
+            chocolate = ChocolateProductLoader(item=ChocolateProduct(), selector=product)
+            chocolate.add_css('name', "a.product-item-meta__title::text")
+            chocolate.add_css('price', 'span.price',
+                              re='<span class="price">\n              <span class="visually-hidden">Sale price</span>(.*)</span>')
+            chocolate.add_css('url', 'div.product-item-meta a::attr(href)')
+            yield chocolate.load_item()
+
         next_page = response.css('[rel="next"] ::attr(href)').get()
 
         if next_page is not None:
